@@ -28,9 +28,5 @@ while True:
                
             #sending the signal section
             if button_b.was_pressed():
-                ''' Is this section needed?
-                if scrollState[scrollIndex] != state: #state will only update if there has been a state change
-                    state = scrollState[scrollIndex]
-                '''
                 display.show(state) #visual confirmation of current state
                 radio.send(microID+','+state)
