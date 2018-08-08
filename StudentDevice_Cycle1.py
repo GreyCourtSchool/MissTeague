@@ -1,7 +1,7 @@
 from microbit import *
 import radio
 
-microID = "31"
+microID = "1"
 radio.on()
 
 state = "R"
