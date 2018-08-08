@@ -1,11 +1,9 @@
-#so you don't need to use sudo to run this.  sudo usermod -a -G dialout pi
 import serial
 from sense_hat import SenseHat
-from time import sleep
 
 sense = SenseHat()
 
-PORT = "/dev/ttyACM1" #you may need to change this.  ls /dev/ttyA*
+PORT = "/dev/ttyACM1" #may need to change this.  ls /dev/ttyA*
 BAUD = 115200 #bits per second
 
 s = serial.Serial(PORT)
@@ -13,6 +11,7 @@ s.baudrate = BAUD
 s.parity   = serial.PARITY_NONE
 s.databits = serial.EIGHTBITS
 s.stopbits = serial.STOPBITS_ONE
+
 studentUpdate = ""
 
 colours = {"R":(255,0,0),"A":(255,165,0),"Y":(255,255,0),"G":(0,255,0)}
