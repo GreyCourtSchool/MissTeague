@@ -66,10 +66,8 @@ studentStates = ["G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G"]
 
+#main program starts here
 setClassroom(classroom,sense)
 while True:
-  #validation against the serial connection being removed
-  #try:
-    studentStates = radioRecieve(sense,studentStates,classroom)
-  #except SerialError:
-    #s.close() #closes the serial connection
+    studentStates = radioRecieve(sense,studentStates,classroom) 
+    #keeps student states updated in the mina program to avoid global variables
