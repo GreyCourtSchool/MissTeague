@@ -9,7 +9,7 @@ def setClassroom(classroom,sense):
 def radioRecieve(sense,studentStates,classroom):
   
   #setup of the serial connections
-  PORT = "/dev/ttyACM0" #USB port that the reciever Micro:bit is connected to - ls /dev/ttyA*
+  PORT = "/dev/ttyACM2" #USB port that the reciever Micro:bit is connected to - ls /dev/ttyA*
   BAUD = 115200 #bits per second
   s = serial.Serial(PORT)
   s.baudrate = BAUD
