@@ -7,35 +7,40 @@ def setClassroom(classroom,sense):
     sense.set_pixel(classroom[key][0],classroom[key][1],(0, 0, 255))
 
 def radioRecieve(sense,studentStates,classroom):
-  
-  #setup of the serial connections
-  PORT = "/dev/ttyACM2" #USB port that the reciever Micro:bit is connected to - ls /dev/ttyA*
-  BAUD = 115200 #bits per second
-  s = serial.Serial(PORT)
-  s.baudrate = BAUD
-  s.parity   = serial.PARITY_NONE
-  s.databits = serial.EIGHTBITS
-  s.stopbits = serial.STOPBITS_ONE
-
-  #Data being readin from the serial connection
-  data = s.readline().decode('UTF-8') #UTF-8 is a method of unicode endcoding that microbits use for serial connections
-  data = data.rstrip() #removes any bits that aren't the data
-  print(data) #not essential - used for testing to output to shell the recieved data
-  
-  studentUpdate = ""
-  studentUpdate = data.split(",") #data is packaged with a , to differenitate between the ID and state - splits to a list
- 
-  #validation against invalid recieved messages
+  #validation against the serial connection being removed
   try:
-      int(studentUpdate[0]) #validation to check the ID is a number
-      if studentUpdate[1] not in ["R","A","Y","G"]: #validation to check state is in valid range
-          print("Invalid state recieved")
-      return changeState(sense,studentUpdate,studentStates,classroom)
-  except ValueError:
-      print("Invalid ID recieved") #if the ID cannot be changed to an integer this message shows on console
-  except IndexError:
-      print("Invalid state recieved") #if the studentUpdate doesn't have an index 1 this error will show on the console
-      
+      #setup of the serial connections
+      PORT = "/dev/ttyACM2" #USB port that the reciever Micro:bit is connected to - ls /dev/ttyA*
+      BAUD = 115200 #bits per second
+      s = serial.Serial(PORT)
+      s.baudrate = BAUD
+      s.parity   = serial.PARITY_NONE
+      s.databits = serial.EIGHTBITS
+      s.stopbits = serial.STOPBITS_ONE
+
+      #Data being readin from the serial connection
+      data = s.readline().decode('UTF-8') #UTF-8 is a method of unicode endcoding that microbits use for serial connections
+      data = data.rstrip() #removes any bits that aren't the data
+      print(data) #not essential - used for testing to output to shell the recieved data
+        
+      studentUpdate = ""
+      studentUpdate = data.split(",") #data is packaged with a , to differenitate between the ID and state - splits to a list
+     
+      #validation against invalid recieved messages
+      try:
+          int(studentUpdate[0]) #validation to check the ID is a number
+          if studentUpdate[1] not in ["R","A","Y","G"]: #validation to check state is in valid range
+              print("Invalid state recieved")
+          return changeState(sense,studentUpdate,studentStates,classroom)
+      except ValueError:
+          print("Invalid ID recieved") #if the ID cannot be changed to an integer this message shows on console
+      except IndexError:
+          print("Invalid state recieved") #if the studentUpdate doesn't have an index 1 this error will show on the console
+
+  except: #serial.serialutil.SerialException:
+    s = serial.Serial("/dev/ttyACM2").close() #closes the serial connection
+    print("Connection Terminated")
+    print("Program Terminated")   
 
 def changeState(sense,studentUpdate,studentStates,classroom):
   
@@ -67,14 +72,6 @@ studentStates = ["G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G"]
 
 setClassroom(classroom,sense)
-error = False
-while error == False:
+while True:
   #validation against the serial connection being removed
-  try:
-    studentStates = radioRecieve(sense,studentStates,classroom)
-  except: #serial.serialutil.SerialException:
-    s = serial.Serial("/dev/ttyACM2").close() #closes the serial connection
-    print("Connection Terminated")
-    error = True
-print("Program Terminated")
-    
+  studentStates = radioRecieve(sense,studentStates,classroom)
