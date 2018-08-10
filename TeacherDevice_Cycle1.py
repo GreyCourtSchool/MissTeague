@@ -67,10 +67,14 @@ studentStates = ["G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G"]
 
 setClassroom(classroom,sense)
-while True:
+error = False
+while error == False:
   #validation against the serial connection being removed
   try:
     studentStates = radioRecieve(sense,studentStates,classroom)
-  except serial.serialutil.SerialException:
+  except: #serial.serialutil.SerialException:
     s = serial.Serial("/dev/ttyACM2").close() #closes the serial connection
+    print("Connection Terminated")
+    error = True
+print("Program Terminated")
     
