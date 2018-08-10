@@ -42,7 +42,6 @@ def changeState(sense,studentUpdate,studentStates,classroom):
   #colours dict {"key": (R,G,B)}
   colours = {"R":(255,0,0),"A":(255,165,0),"Y":(255,255,0),"G":(0,255,0)}
 
- 
   #set_pixel(x,y,(r,g,b))
   sense.set_pixel(classroom[studentUpdate[0]][0],classroom[studentUpdate[0]][1],colours[studentUpdate[1]]) #updates the pixel
   studentStates[int(studentUpdate[0])-1] = studentUpdate[1] #updates the states list with the new student state
@@ -50,9 +49,7 @@ def changeState(sense,studentUpdate,studentStates,classroom):
   return studentStates #this is inplace of using studentState as a global variable
   
   
-  
 sense = SenseHat()
-
 
 #classroom dict {"key":(x,y)}
 classroom = {"1":(0,1),"2":(0,2),"3":(0,3),"4":(0,4),"5":(0,5),"6":(0,6),"7":(0,7),
