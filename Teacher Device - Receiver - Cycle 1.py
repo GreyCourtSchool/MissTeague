@@ -1,4 +1,4 @@
-from microbit import *
+from microbit import display #doesn't need *
 import radio
 
 radio.on()
