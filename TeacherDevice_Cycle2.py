@@ -1,5 +1,7 @@
 import serial
 from sense_hat import SenseHat
+import DatabaseClass #need to check the syntax of this
+import datetime
 
 def setClassroom(classroom,sense):
   sense.clear() #clears the screen of any coloured pixels
@@ -46,6 +48,13 @@ def changeState(sense,studentUpdate,studentStates,classroom):
   sense.set_pixel(classroom[studentUpdate[0]][0],classroom[studentUpdate[0]][1],colours[studentUpdate[1]]) #updates the pixel
   studentStates[int(studentUpdate[0])-1] = studentUpdate[1] #updates the states list with the new student state
   print(studentStates) #not essential - used for testing to show the updated list of studentStates
+  #need to update the database
+   with sqlite3.connect(database)as db:
+        cursor = db.cursor()
+        #used if not exists instead of selection statement 
+        #attribues - lessonID, roomName,deviceID integer,date text, time text, currentState text
+        sql  = "INSERT INTO lessonTable VALUES (null, \"T1\",{},{},{},{})".format(studentUpdate[0],datetime.date,datetime.time,studentUpdate[1])
+        cursor.execute(sql)
   return studentStates #this is inplace of using studentState as a global variable
   
   
