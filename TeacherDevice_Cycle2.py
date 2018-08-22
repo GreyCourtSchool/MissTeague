@@ -48,6 +48,54 @@ def changeState(sense,studentUpdate,studentStates,classroom):
   print(studentStates) #not essential - used for testing to show the updated list of studentStates
   return studentStates #this is inplace of using studentState as a global variable
   
+import sqlite3
+def generateDatabase():
+    #generate database
+    with sqlite3.connect("SRAYGS.db") as db:
+        cursor = db.cursor()
+        sql  = """CREATE Table classroomTable(
+                roomName text PRIMARY KEY,
+                student1 text, student2 text, student3 text, student4 text, student5 text, student6 text, student7 text,
+                student8 text, student9 text, student10 text, student11 text, student12 text, student13 text, student14 text, student15 text,
+                student16 text, student17 text, student18 text, student19 text, student20 text, student21 text, student22 text, student23 text,
+                student24 text, student25 text, student26 text, student27 text, student28 text, student29 text, student30 text, student31 text, student32 text);
+                """
+        cursor.execute(sql)
+
+        sql = """ CREATE Table yearsTable(
+                yearID integer PRIMARY KEY AUTOINCREMENT,
+                academicYear text); """
+        cursor.execute(sql)
+        
+        sql = """ CREATE Table classesTable(
+                classID integer PRIMARY KEY AUTOINCREMENT,
+                yearID integer NOT NULL,
+                roomName text NOT NULL,
+                className text,
+                FOREIGN KEY (roomName) REFERENCES classroomTable(roomName),
+                FOREIGN KEY (yearID) REFERENCES yearsTable(yearID)); """
+        cursor.execute(sql)
+
+        sql = """ CREATE Table lessonTable(
+               lessonID integer PRIMARY KEY AUTOINCREMENT,
+               roomName text NOT NULL,
+               deviceID integer,
+               date text,
+               time text,
+               currentState text,
+               FOREIGN KEY (roomName) REFERENCES classroomTable(roomName)); """
+        cursor.execute(sql)
+        
+def writeSQL():
+     with sqlite3.connect("SRAYGS.db") as db:
+        cursor = db.cursor()
+        sql  = input()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for each in result:
+            print(each)
+    
+
   
 sense = SenseHat()
 
