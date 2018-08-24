@@ -7,6 +7,90 @@ def setClassroom(classroom,sense):
   sense.clear() #clears the screen of any coloured pixels
   for key in classroom:
     sense.set_pixel(classroom[key][0],classroom[key][1],(0, 0, 255))
+    
+def generateDatabase():
+    #generate database
+    database = "SRAYGS.db"
+    with sqlite3.connect(database)as db:
+        cursor = db.cursor()
+        #used if not exists instead of selection statement 
+        sql  = """CREATE Table IF NOT EXISTS classroomTable(
+                roomName text PRIMARY KEY,
+                student1 text, student2 text, student3 text, student4 text, student5 text, student6 text, student7 text,
+                student8 text, student9 text, student10 text, student11 text, student12 text, student13 text, student14 text, student15 text,
+                student16 text, student17 text, student18 text, student19 text, student20 text, student21 text, student22 text, student23 text,
+                student24 text, student25 text, student26 text, student27 text, student28 text, student29 text, student30 text, student31 text, student32 text);
+                """
+        cursor.execute(sql)
+
+        sql = """ CREATE Table IF NOT EXISTS yearsTable(
+                yearID integer PRIMARY KEY AUTOINCREMENT,
+                academicYear text); """
+        cursor.execute(sql)
+        
+        sql = """ CREATE Table IF NOT EXISTS classesTable(
+                classID integer PRIMARY KEY AUTOINCREMENT,
+                yearID integer NOT NULL,
+                roomName text NOT NULL,
+                className text,
+                FOREIGN KEY (roomName) REFERENCES classroomTable(roomName),
+                FOREIGN KEY (yearID) REFERENCES yearsTable(yearID)); """
+        cursor.execute(sql)
+
+        sql = """ CREATE Table IF NOT EXISTS lessonTable(
+               lessonID integer PRIMARY KEY AUTOINCREMENT,
+               roomName text NOT NULL,
+               deviceID integer,
+               date text,
+               time text,
+               currentState text,
+               FOREIGN KEY (roomName) REFERENCES classroomTable(roomName)); """
+        cursor.execute(sql)
+
+        #database.commit() #saves the database where database is sqlite3.connect("name.db")
+        #database.close()
+
+        return database
+
+def setClass():
+    database = generateDatabase()
+    
+    with sqlite3.connect(database)as db:
+        cursor = db.cursor()
+        sql  = "SELECT className FROM classesTable"
+        cursor.execute(sql)
+        print("***Existing Classes***")
+        #return existing classes
+        result = cursor.fetchall()
+        for each in result:
+            print(each)
+        print("From the list above, type the class you want to choose")
+        currentClass = input(">")
+        #setting class
+        sql = "SELECT classID FROM classesTable WHERE className = \"{}\"".format(currentClass)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        if result:
+            currentClass = result[0][0]
+        else:
+            print("Your new class will now be added")
+            #sql = "INSERT INTO classesTable(yearID, roomName, className) VALUES (0,\"T1\",?)"
+            sql = "INSERT INTO classesTable VALUES (null,0,\"T1\",\"{}\")".format(currentClass)
+            cursor.execute(sql)
+
+        print(result)
+        print(currentClass)
+
+            
+def writeSQL():
+     with sqlite3.connect("SRAYGS.db") as db:
+        cursor = db.cursor()
+        sql  = input()
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        for each in result:
+            print(each)
+
 
 def radioRecieve(sense,studentStates,classroom):
   
@@ -78,6 +162,8 @@ studentStates = ["G","G","G","G","G","G","G",
 
 #main program starts here
 setClassroom(classroom,sense)
+generateDatabase()
+setClass()
 while True:
     studentStates = radioRecieve(sense,studentStates,classroom) 
     #keeps student states updated in the mina program to avoid global variables
