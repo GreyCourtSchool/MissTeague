@@ -1,5 +1,7 @@
 import serial
 from sense_hat import SenseHat
+import datetime
+import sqlite3
 
 def setClassroom(classroom,sense):
   sense.clear() #clears the screen of any coloured pixels
@@ -9,7 +11,7 @@ def setClassroom(classroom,sense):
 def radioRecieve(sense,studentStates,classroom):
   
   #setup of the serial connections
-  PORT = "/dev/ttyACM2" #USB port that the reciever Micro:bit is connected to - ls /dev/ttyA*
+  PORT = "/dev/ttyACM4" #USB port that the reciever Micro:bit is connected to - ls /dev/ttyA*
   BAUD = 115200 #bits per second
   s = serial.Serial(PORT)
   s.baudrate = BAUD
@@ -46,6 +48,17 @@ def changeState(sense,studentUpdate,studentStates,classroom):
   sense.set_pixel(classroom[studentUpdate[0]][0],classroom[studentUpdate[0]][1],colours[studentUpdate[1]]) #updates the pixel
   studentStates[int(studentUpdate[0])-1] = studentUpdate[1] #updates the states list with the new student state
   print(studentStates) #not essential - used for testing to show the updated list of studentStates
+
+  with sqlite3.connect("SRAYGS.db")as db:
+        cursor = db.cursor()
+        #used if not exists instead of selection statement 
+        #attribues - lessonID, roomName,deviceID integer,date text, time text, currentState text
+        date = str(datetime.date.today().strftime("%d/%m/%y"))
+        time = str(datetime.datetime.today().strftime("%H%M"))
+        sql  = "INSERT INTO lessonTable VALUES (null,\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');".format("T1",studentUpdate[0],date,time,studentUpdate[1])
+        print(sql)
+        cursor.execute(sql)
+
   return studentStates #this is inplace of using studentState as a global variable
   
   
