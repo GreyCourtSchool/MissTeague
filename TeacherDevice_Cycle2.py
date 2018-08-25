@@ -63,23 +63,30 @@ def setClass():
         #return existing classes
         result = cursor.fetchall()
         for each in result:
-            print(each)
+            print(" - " + each[0])
         print("From the list above, type the class you want to choose")
         currentClass = input(">")
         #setting class
-        sql = "SELECT classID FROM classesTable WHERE className = \"{}\"".format(currentClass)
-        cursor.execute(sql)
-        result = cursor.fetchall()
+        result = getClass(database,currentClass)
         if result:
-            currentClass = result[0][0]
+            print(result[0][0])
         else:
             print("Your new class will now be added")
             #sql = "INSERT INTO classesTable(yearID, roomName, className) VALUES (0,\"T1\",?)"
-            sql = "INSERT INTO classesTable VALUES (null,0,\"T1\",\"{}\")".format(currentClass)
+            sql = "INSERT INTO classesTable VALUES (null,0,\"T1\",\"{}\")".format(currentClass.lower())
             cursor.execute(sql)
+            currentClass=getClass(database,currentClass)
+        #currentClass = getClass(generateDatabase(),currentClass)
+        #print("1",result)
+        #print(currentClass)
 
-        print(result)
-        print(currentClass)
+def getClass(database,currentClass):
+    with sqlite3.connect(database)as db:
+        cursor = db.cursor()
+        sql = "SELECT classID FROM classesTable WHERE className = \"{}\"".format(currentClass.lower())
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        return result
 
             
 def writeSQL():
