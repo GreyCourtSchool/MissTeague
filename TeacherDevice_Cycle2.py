@@ -9,17 +9,18 @@ def setClassroom(classroom,sense):
     sense.set_pixel(classroom[key][0],classroom[key][1],(0, 0, 255))
     
 def generateDatabase():
-    #generate database
-    database = "SRAYGS.db"
+    database = "SRAYGS.db" #this is the value that is returned when this subroutine is called
     with sqlite3.connect(database)as db:
         cursor = db.cursor()
         #used if not exists instead of selection statement 
         sql  = """CREATE Table IF NOT EXISTS classroomTable(
                 roomName text PRIMARY KEY,
                 student1 text, student2 text, student3 text, student4 text, student5 text, student6 text, student7 text,
-                student8 text, student9 text, student10 text, student11 text, student12 text, student13 text, student14 text, student15 text,
-                student16 text, student17 text, student18 text, student19 text, student20 text, student21 text, student22 text, student23 text,
-                student24 text, student25 text, student26 text, student27 text, student28 text, student29 text, student30 text, student31 text, student32 text);
+                student8 text, student9 text, student10 text, student11 text, student12 text, student13 text, 
+                student14 text, student15 text,student16 text, student17 text, student18 text, student19 text, 
+                student20 text, student21 text, student22 text, student23 text, student24 text, student25 text, 
+                student26 text, student27 text, student28 text, student29 text, student30 text, student31 text, 
+                student32 text);
                 """
         cursor.execute(sql)
 
@@ -46,11 +47,8 @@ def generateDatabase():
                currentState text,
                FOREIGN KEY (roomName) REFERENCES classroomTable(roomName)); """
         cursor.execute(sql)
-
-        #database.commit() #saves the database where database is sqlite3.connect("name.db")
-        #database.close()
-
-        return database
+        
+        return database #return statement used to call the database in other subroutines
 
 def setClass():
     database = generateDatabase()
@@ -60,25 +58,21 @@ def setClass():
         sql  = "SELECT className FROM classesTable"
         cursor.execute(sql)
         print("***Existing Classes***")
-        #return existing classes
         result = cursor.fetchall()
         for each in result:
             print(" - " + each[0])
         print("From the list above, type the class you want to choose")
         currentClass = input(">")
+       
         #setting class
         result = getClass(database,currentClass)
         if result:
             print(result[0][0])
         else:
             print("Your new class will now be added")
-            #sql = "INSERT INTO classesTable(yearID, roomName, className) VALUES (0,\"T1\",?)"
             sql = "INSERT INTO classesTable VALUES (null,0,\"T1\",\"{}\")".format(currentClass.lower())
             cursor.execute(sql)
             currentClass=getClass(database,currentClass)
-        #currentClass = getClass(generateDatabase(),currentClass)
-        #print("1",result)
-        #print(currentClass)
 
 def getClass(database,currentClass):
     with sqlite3.connect(database)as db:
@@ -146,7 +140,8 @@ def changeState(sense,studentUpdate,studentStates,classroom):
         #attribues - lessonID, roomName,deviceID integer,date text, time text, currentState text
         date = str(datetime.date.today().strftime("%d/%m/%y"))
         time = str(datetime.datetime.today().strftime("%H%M"))
-        sql  = "INSERT INTO lessonTable VALUES (null,\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');".format("T1",studentUpdate[0],date,time,studentUpdate[1])
+        sql  = "INSERT INTO lessonTable VALUES (null,\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');"
+                                                                        .format("T1",studentUpdate[0],date,time,studentUpdate[1])
         print(sql)
         cursor.execute(sql)
 
