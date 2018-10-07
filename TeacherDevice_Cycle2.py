@@ -92,7 +92,48 @@ def writeSQL():
         for each in result:
             print(each)
 
-
+def export():
+     dbAttributeIndex = {"classroomTable":"roomName,student1,student2,student3,student4,student5,student6,student7,student8,student9,student10,student11,student12,student13,student14,student15,student16,student17,student18,student19,student20,student21,student22,student23,student24,student25,student26,student27,student28,student29,student30,student31,student32","yearsTable":"yearID,academicYear", "classesTable": "classID,yearID,roomName,className","lessonTable":"lessonID,roomName,deviceID,date,time,currentState"}
+     for key,value in dbAttributeIndex.items():
+         writeFile(key,value)
+         print(key)
+         print(value)
+     #Create and Export classroomTable
+     #sql = "SELECT * FROM classroomTable;"
+     #writeFile("classroomTable","roomName,student1,student2,student3,student4,student5,student6,student7,student8,student9,student10,student11,student12,student13,student14,student15,student16,student17,student18,student19,student20,student21,student22,student23,student24,student25,student26,student27,student28,student29,student30,student31,student32")
+     
+     #Create and Export yearsTable
+     #sql = "SELECT * FROM yearsTable;"
+     #attributes = "yearID,academicYear"
+     #writeFile("yearsTable","yearID,academicYear")
+     #Create and Export classesTable
+     #sql = "SELECT * FROM classesTable;"
+     #attributes = "classID,yearID,roomName,className"
+     #writeFile("classesTable","classID,yearID,roomName,className")
+     #Create and Export lessonTable
+     #sql = "SELECT * FROM lessonTable;"
+     #attributes = "lessonID,roomName,deviceID,date,time,currentState"
+     #writeFile("lessonTable","lessonID,roomName,deviceID,date,time,currentState")
+    
+def writeFile(table,attributes):
+    with sqlite3.connect("SRAYGS.db") as db:
+        cursor = db.cursor()
+        cursor.execute("SELECT * FROM {};".format(table))
+        result = cursor.fetchall()
+        file = open("{} {} {}.txt".format(table,str(datetime.date.today().strftime("%d-%m-%y")),str(datetime.datetime.today().strftime("%H%M"))),"w")
+        file.write(attributes)
+        for each in result:
+            each = list(each)
+            print(each)
+            record = ""
+            for item in each:
+                record += str(item)+","
+            #writeline tofile
+            #each = each[1:-1]
+            print(record)
+            file.write("\n"+record)
+        file.close()
+    
 def radioRecieve(sense,studentStates,classroom):
   
   #setup of the serial connections
@@ -140,8 +181,7 @@ def changeState(sense,studentUpdate,studentStates,classroom):
         #attribues - lessonID, roomName,deviceID integer,date text, time text, currentState text
         date = str(datetime.date.today().strftime("%d/%m/%y"))
         time = str(datetime.datetime.today().strftime("%H%M"))
-        sql  = "INSERT INTO lessonTable VALUES (null,\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');"
-                                                                        .format("T1",studentUpdate[0],date,time,studentUpdate[1])
+        sql  = "INSERT INTO lessonTable VALUES (null,\'{}\',\'{}\',\'{}\',\'{}\',\'{}\');".format("T1",studentUpdate[0],date,time,studentUpdate[1])
         print(sql)
         cursor.execute(sql)
 
@@ -161,11 +201,11 @@ studentStates = ["G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G",
                  "G","G","G","G","G","G","G","G"]
-
+'''
 #main program starts here
 setClassroom(classroom,sense)
 generateDatabase()
 setClass()
 while True:
     studentStates = radioRecieve(sense,studentStates,classroom) 
-    #keeps student states updated in the mina program to avoid global variables
+    #keeps student states updated in the mina program to avoid global variables'''
