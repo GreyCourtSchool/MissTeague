@@ -1,0 +1,12 @@
+from tkinter import *
+
+class Window:
+
+  def __init__(self, geometry, title):
+    self.root = Tk()
+    self.root.geometry("{}".format(geometry))
+    self.root.title("{}".format(title))
+    self.root.resizable(False, False)
+    self.root.configure(background="pink")
+
+root.mainloop()
