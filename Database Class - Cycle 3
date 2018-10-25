@@ -2,10 +2,10 @@ import sqlite3
 
 class Database:
 
-    def __init__(self,name):
-        self.name = name + ".db"
+    def openUser(self,name):
+        self.name = name
         self.database = sqlite3.connect(name)
-        print("Database name is {}, stored at {}".format(self.name,self.database))
+        print("Database name is {}".format(self.name))
         #return database
 
             
