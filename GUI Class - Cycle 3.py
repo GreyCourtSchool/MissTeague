@@ -1,59 +1,65 @@
-from guizero import App, PushButton, Window, Text, TextBox
+from guizero import App, PushButton, Window, Text, TextBox, ListBox, error
 from DatabaseClassv2 import Database
-'''
-class GUI:
-   def __init__(self,width, height, title):
-      self.app = App(title=title,width=width,height=height,layout="grid",bg="white")
-      #self.app = App()
-      #self.app.display()
-      #self.window = Window(app,title=title,width=width,height=height,layout="grid",bg="white")
-'''
-class NewWindow():
-   
-   def __init__(self,width, height, title):
-      if not self.app:
-         self.app = App(title=title,width=width,height=height,layout="grid",bg="white")
-      self.window = Window(self.app,title=title,width=width,height=height,layout="grid",bg="white")
-      self.window.show()
-      
-   def openFile(self,filename):
+
+class GUI(Database): #creates the app within which all others are defined
+   def __init__(self,width, height, title, bg):
+      self.bg = bg
+      self.app = App(title=title,width=width,height=height,bg = self.bg)
       self.contents = []
-      with open(filename+".txt","r") as self.file:
+      self.users = []
+      with open("users.txt","r") as self.file:
          for line in self.file:
             self.contents.append(line.split(","))
-      return self.contents
+      self.text = Text(self.app,"Select a user below", grid=[0,0,3,1])#add in font size
+      for entry in range(len(self.contents)):
+         self.users.append(self.contents[entry][0])
+      self.users.append("New User...")
+      self.selectUser = ListBox(self.app, items=self.users,command=self.selectUser,scrollbar=True)
+      self.button = PushButton(self.app,text="Cancel",command=self.close)
 
-class Select(NewWindow,Database): #need to import from database to return database
-  
-  def __init__(self,height, width, title):
-    super().__init__(height, width, title)
-    
-  #result = Database.returnSQL("SELECT className FROM classesTable") 
-  #need to return the list of names
-  #result = super().openFile()
-   
-    result = super().openFile("users")
-    print(result)
-    for entry in range(len(result)):
-       self.button=PushButton(self.app ,text=result[entry][0],command=lambda:self.openUser(result[entry][1]),grid=[0,entry])
-       #self.button.grid(row=entry)
-    self.button = PushButton(self.app,text="New User...",command=self.newUser,grid=[0,len(result)])
+   def selectUser(self,value):
+      if value == "New User...":
+         self.newUser()
+      else:
+         value = value.replace(" ","")
+         self.openUser(value+".db")
+         with open("users.txt","a") as self.file:
+            self.file.wrie(value)
 
-  def test(self):
-     print("test")
+   def newUser(self):
+      print("new user")
+      self.app.hide()
+      self.window = Window(self.app,"Create new user",height=100, width=200,bg = self.bg)
+      self.text =Text(self.window,text="Enter the your name\nE.g. Mr Hirst", size=9)
+      self.entry = TextBox(self.window,width=10)
+      self.button = PushButton(self.window,text="Submit",command=self.submitNewUser)
 
-  def newUser(self):
-     print("new user")
-     self.window.hide()
-     super().__init__(250, 100, "New User")
-     self.text=Text(self.app,text="Enter the your name\nE.g. Mr Hirst",grid=[0,0])
-     self.entry = TextBox(self.app,width=10)
-     
-     self.button = PushButton(self.app,text="Submit",command=self.submitNewUser,grid=[0,1])
+   def submitNewUser(self):
+      self.user = self.entry.get()
+      if self.user.isalpha() or " " in self.user or "-" in self.user:
+         self.user = self.user.replace(" ","")
+         self.openUser(self.user)
+         self.generateDatabase()
+         print("new database created")
+      else:
+         error("Input Error","You must only include letters, a space or hyphen")
 
-  def submitNewUser(self):
-     self.user = self.entry.get()
-     self.user = self.user.replace(" ","")
-     self.openUser(self.user)
-     print("new database created")
-     
+   def close(self):
+      self.app.destroy()
+      quit()
+
+   def choice(self):
+      pass
+
+   def selectClass(self):
+      pass
+
+   def runClass(self):
+      pass
+
+   def analyticsHome(self):
+      pass
+
+   def setup(self):
+      pass
+
