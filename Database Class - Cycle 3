@@ -2,10 +2,10 @@ import sqlite3
 
 class Database:
 
-    def __init__(self,name):
-        self.name = name+".db"
-        self.database = sqlite3.connect(name+".db")
-        print("Database name is {}, stored at {}".format(self.name,self.database))
+    def openUser(self,name):
+        self.name = name
+        self.database = sqlite3.connect(name)
+        print("Database name is {}".format(self.name))
         #return database
 
             
@@ -81,45 +81,6 @@ class Database:
             #print(result)
             #print(currentClass)
             return currentClass
-            
-def setClass():
-    database = generateDatabase()
-    
-    with sqlite3.connect(database)as db:
-        cursor = db.cursor()
-        sql  = "SELECT className FROM classesTable"
-        cursor.execute(sql)
-        print("***Existing Classes***")
-        #return existing classes
-        result = cursor.fetchall()
-        for each in result:
-            print(" - " + each[0])
-        print("From the list above, type the class you want to choose")
-        currentClass = input(">")
-        #setting class
-        result = getClass(database,currentClass)
-        if result:
-            print(result[0][0])
-        else:
-            print("Your new class will now be added")
-            #sql = "INSERT INTO classesTable(yearID, roomName, className) VALUES (0,\"T1\",?)"
-            sql = "INSERT INTO classesTable VALUES (null,0,\"T1\",\"{}\")".format(currentClass.lower())
-            cursor.execute(sql)
-            currentClass=getClass(database,currentClass)
-        #currentClass = getClass(generateDatabase(),currentClass)
-        #print("1",result)
-        #print(currentClass)
-
-def getClass(database,currentClass):
-    with sqlite3.connect(database)as db:
-        cursor = db.cursor()
-        sql = "SELECT classID FROM classesTable WHERE className = \"{}\"".format(currentClass.lower())
-        cursor.execute(sql)
-        result = cursor.fetchall()
-        return result
-
-
-
 
     #INSERT INTO classesTable VALUES (0,0,"T1","8 Beech")  
 
@@ -135,3 +96,33 @@ def getClass(database,currentClass):
                 print(each)
 
 
+    def returnSQL(self,sql):
+        with self.database as db:
+            ursor = db.cursor()
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            return result
+
+    def export(self):
+        dbAttributeIndex = {"classroomTable":"roomName,student1,student2,student3,student4,student5,student6,student7,student8,student9,student10,student11,student12,student13,student14,student15,student16,student17,student18,student19,student20,student21,student22,student23,student24,student25,student26,student27,student28,student29,student30,student31,student32","yearsTable":"yearID,academicYear", "classesTable": "classID,yearID,roomName,className","lessonTable":"lessonID,roomName,deviceID,date,time,currentState"}
+        for key,value in dbAttributeIndex.items():
+            self.writeFile(key,value)
+            print(key)
+            print(value)
+
+    def writeFile(self,table,attributes):
+        with sqlite3.connect(self.database) as db:
+            cursor = db.cursor()
+            cursor.execute("SELECT * FROM {};".format(table))
+            result = cursor.fetchall()
+            file = open("{} {} {}.txt".format(table,str(datetime.date.today().strftime("%d-%m-%y")),str(datetime.datetime.today().strftime("%H%M"))),"w")
+            file.write(attributes)
+            for each in result:
+                each = list(each)
+                #print(each)
+                record = ""
+                for item in each:
+                    record += str(item)+","
+                #print(record)
+                file.write("\n"+record)
+            file.close()
